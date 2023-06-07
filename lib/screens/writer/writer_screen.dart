@@ -17,4 +17,3 @@ class _BookWritingScreenState extends State<BookWritingScreen> {
   final Color _textColor = DarkTheme.textColorDark;
   bool _isDrawerOpen = true;
 
- 
