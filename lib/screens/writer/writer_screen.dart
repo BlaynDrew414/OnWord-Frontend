@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'writer_left_menu.dart';
 import '../../themes.dart';
 
 class BookDetailScreen extends StatefulWidget {
@@ -9,8 +9,6 @@ class BookDetailScreen extends StatefulWidget {
 }
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
-  //final _titleController = TextEditingController();
-  //final _authorController = TextEditingController();
   final _chapterController = TextEditingController();
   bool _isDrawerOpen = true;
   bool _isDarkMode = false;
@@ -63,15 +61,25 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               icon: Icon(Icons.menu),
               onPressed: _toggleDrawer,
             ),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  _isDarkMode ? Icons.brightness_high : Icons.brightness_low,
+                  color: textColor,
+                ),
+                onPressed: _toggleDarkMode,
+              ),
+            ],
           ),
         ),
         body: Row(
           children: [
-            if (screenWidth >= 900 && _isDrawerOpen) Expanded(child: Container()), // Replace with WriterLeftMenu
+            if (screenWidth >= 900 && _isDrawerOpen) WriterLeftMenu(isDarkMode: _isDarkMode), // Replace with WriterLeftMenu
             Expanded(
               flex: 5,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                color: themeData.colorScheme.background, // Use background color from theme
                 child: Form(
                   child: Column(
                     children: [

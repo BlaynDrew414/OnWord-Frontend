@@ -18,9 +18,9 @@ class LightTheme {
 
 class DarkTheme {
   static final ThemeData themeData = ThemeData.dark().copyWith(
-    primaryColor: Color(0xFF2697FF),
+    primaryColor: Color.fromARGB(237, 30, 40, 62),
     colorScheme: ColorScheme.dark(
-      background: Color.fromARGB(255, 28, 29, 39),
+      background: Color.fromARGB(235, 25, 32, 46),
       secondary: Color.fromARGB(237, 30, 40, 62),
     ),
     textTheme: TextTheme(
