@@ -15,18 +15,31 @@ class _WriterLeftMenuState extends State<WriterLeftMenu> {
   bool _isChapterExpanded = true;
   bool _isNoteExpanded = true;
 
-  void _onReorder(int oldIndex, int newIndex, List list) {
-    if (newIndex > oldIndex) newIndex -= 1;
-    setState(() {
-      final item = list.removeAt(oldIndex);
-      list.insert(newIndex, item);
-    });
+  List<String> chapters = [
+    'Chapter 1',
+    'Chapter 2',
+    'Chapter 3',
+    'Chapter 4',
+    'Chapter 5',
+  ];
+
+  List<String> notes = [
+    'Note 1',
+    'Note 2',
+    'Note 3',
+    'Note 4',
+    'Note 5',
+  ];
+
+  Color getTextColor(bool isDarkMode) {
+    return isDarkMode ? DarkTheme.textColorDark : LightTheme.textColorLight;
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeData = widget.isDarkMode ? DarkTheme.themeData : LightTheme.themeData;
-    final textColor = widget.isDarkMode ? DarkTheme.textColorDark : LightTheme.textColorLight;
+    final themeData =
+        widget.isDarkMode ? DarkTheme.themeData : LightTheme.themeData;
+    final textColor = getTextColor(widget.isDarkMode);
 
     return Container(
       decoration: BoxDecoration(
@@ -38,9 +51,8 @@ class _WriterLeftMenuState extends State<WriterLeftMenu> {
       child: Drawer(
         child: ListView(
           children: [
-            Container(
-              width: 150,
-              child: Row(
+            ListTile(
+              title: Row(
                 children: [
                   GestureDetector(
                     child: _isChapterExpanded
@@ -52,9 +64,7 @@ class _WriterLeftMenuState extends State<WriterLeftMenu> {
                       });
                     },
                   ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
+                  SizedBox(width: 10.0),
                   Text(
                     'Chapters',
                     style: TextStyle(
@@ -72,79 +82,93 @@ class _WriterLeftMenuState extends State<WriterLeftMenu> {
                       // Add your logic for adding a chapter
                     },
                   ),
-                  SizedBox(width: 9.0)
+                  SizedBox(width: 9.0),
                 ],
               ),
             ),
             if (_isChapterExpanded)
-              ReorderableListView.builder(
+              ReorderableListView(
+                buildDefaultDragHandles: false,
                 shrinkWrap: true,
                 physics: ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    key: Key('$index'),
-                    title: Text('Chapter $index', style: TextStyle(color: textColor)),
-                    trailing: Icon(Icons.drag_handle),
-                  );
-                },
-                itemCount: 5, // Set the number of chapters or use a dynamic value
+                children: [
+                  for (var i = 0; i < chapters.length; i++)
+                    ReorderableDragStartListener(
+                      index: i,
+                      key: Key('chapter_$i'),
+                      child: ListTile(
+                        title: Text(chapters[i], style: TextStyle(color: textColor)),
+                      ),
+                    ),
+                ],
                 onReorder: (oldIndex, newIndex) {
-                  _onReorder(oldIndex, newIndex, List.generate(5, (index) => 'Chapter $index'));
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  setState(() {
+                    final item = chapters.removeAt(oldIndex);
+                    chapters.insert(newIndex, item);
+                  });
                 },
               ),
             SizedBox(height: 16),
             Container(
               width: 150,
-              child: Row(
-                children: [
-                  GestureDetector(
-                    child: _isNoteExpanded
-                        ? Icon(Icons.keyboard_arrow_down)
-                        : Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      setState(() {
-                        _isNoteExpanded = !_isNoteExpanded;
-                      });
-                    },
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  Text(
-                    'Notes',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: textColor,
+              child: ListTile(
+                title: Row(
+                  children: [
+                    GestureDetector(
+                      child: _isNoteExpanded
+                          ? Icon(Icons.keyboard_arrow_down)
+                          : Icon(Icons.keyboard_arrow_right),
+                      onTap: () {
+                        setState(() {
+                          _isNoteExpanded = !_isNoteExpanded;
+                        });
+                      },
                     ),
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    child: Icon(
-                      Icons.add,
-                      size: 18,
+                    SizedBox(width: 10.0),
+                    Text(
+                      'Notes',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: textColor,
+                      ),
                     ),
-                    onTap: () {
-                      // Add your logic for adding a note
-                    },
-                  ),
-                  SizedBox(width: 9.0)
-                ],
+                    Spacer(),
+                    GestureDetector(
+                      child: Icon(
+                        Icons.add,
+                        size: 18,
+                      ),
+                      onTap: () {
+                        // Add your logic for adding a note
+                      },
+                    ),
+                    SizedBox(width: 9.0),
+                  ],
+                ),
               ),
             ),
             if (_isNoteExpanded)
-              ReorderableListView.builder(
+              ReorderableListView(
+                buildDefaultDragHandles: false,
                 shrinkWrap: true,
                 physics: ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    key: Key('$index'),
-                    title: Text('Note $index', style: TextStyle(color: textColor)),
-                    trailing: Icon(Icons.drag_handle),
-                  );
-                },
-                itemCount: 5, // Set the number of notes or use a dynamic value
+                children: [
+                  for (var i = 0; i < notes.length; i++)
+                    ReorderableDragStartListener(
+                      index: i,
+                      key: Key('note_$i'),
+                      child: ListTile(
+                        title: Text(notes[i], style: TextStyle(color: textColor)),
+                      ),
+                    ),
+                ],
                 onReorder: (oldIndex, newIndex) {
-                  _onReorder(oldIndex, newIndex, List.generate(5, (index) => 'Note $index'));
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  setState(() {
+                    final item = notes.removeAt(oldIndex);
+                    notes.insert(newIndex, item);
+                  });
                 },
               ),
           ],
