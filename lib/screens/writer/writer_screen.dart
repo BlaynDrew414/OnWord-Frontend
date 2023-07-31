@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'writer_left_menu.dart';
 import '../../themes.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
 class BookDetailScreen extends StatefulWidget {
   @override
@@ -10,6 +11,8 @@ class BookDetailScreen extends StatefulWidget {
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
   final _chapterController = TextEditingController();
+  final _contentController = QuillController.basic();
+  final _titleController = TextEditingController();
   bool _isDrawerOpen = true;
   bool _isDarkMode = false;
 
@@ -29,7 +32,16 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final themeData = _isDarkMode ? DarkTheme.themeData : LightTheme.themeData;
-    final textColor = _isDarkMode ? DarkTheme.textColorDark : LightTheme.textColorLight;
+    final textColor =
+        _isDarkMode ? DarkTheme.textColorDark : LightTheme.textColorLight;
+
+    // Create custom styles for Quill Editor
+    final defaultStyles = DefaultStyles(
+      // Here, we set the text color based on the theme
+      color: textColor,
+      // You can also add other styles like heading, link, etc., as per your requirement
+      // For now, we only set the text color.
+    );
 
     return MaterialApp(
       theme: themeData,
@@ -39,13 +51,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           child: AppBar(
             title: Padding(
               padding: const EdgeInsets.only(left: 180),
-              child: Text(
-                'Book Title',
+              child: TextFormField(
+                enabled: true,
                 style: GoogleFonts.merriweather(
                   color: textColor,
-                  fontSize: 36,
+                  fontSize: 32,
                   fontWeight: FontWeight.w400,
                   letterSpacing: 1.5,
+                ),
+                decoration: InputDecoration(
+                  hintText: "Book Title",
+                  border: InputBorder.none,
                 ),
               ),
             ),
@@ -74,74 +90,75 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
         body: Row(
           children: [
-            if (screenWidth >= 900 && _isDrawerOpen) WriterLeftMenu(isDarkMode: _isDarkMode), // Replace with WriterLeftMenu
+            if (screenWidth >= 900 && _isDrawerOpen)
+              WriterLeftMenu(
+                isDarkMode: _isDarkMode,
+              ),
             Expanded(
               flex: 5,
-              child: Container(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                color: themeData.colorScheme.background, // Use background color from theme
-                child: Form(
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        enabled: true,
-                        textAlign: TextAlign.center,
-                        controller: _chapterController,
-                        style: GoogleFonts.merriweather(
-                          color: textColor,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w300,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Chapter Title...',
-                          border: InputBorder.none,
-                        ),
-                        maxLines: null,
-                      ),
-                      Divider(
+                child: Column(
+                  children: [
+                    QuillToolbar.basic(
+                      controller: _contentController,
+                    ),
+                    TextFormField(
+                      enabled: true,
+                      textAlign: TextAlign.center,
+                      controller: _chapterController,
+                      style: GoogleFonts.merriweather(
                         color: textColor,
-                        thickness: 1,
-                        height: 40,
-                        endIndent: 420,
-                        indent: 420,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w300,
                       ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              top: 80,
-                              right: _isDrawerOpen ? 250 : 0,
-                              left: _isDrawerOpen ? 50 : 0,
-                            ),
-                            child: TextFormField(
-                              enabled: true,
-                              textAlign: TextAlign.left,
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              style: GoogleFonts.merriweather(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w300,
-                                color: textColor,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: "Start writing...",
-                                border: InputBorder.none,
-                              ),
-                            ),
+                      decoration: InputDecoration(
+                        hintText: 'Chapter Title...',
+                        border: InputBorder.none,
+                      ),
+                      maxLines: null,
+                    ),
+                    Divider(
+                      color: textColor,
+                      thickness: 1,
+                      height: 40,
+                      endIndent: 420,
+                      indent: 420,
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            top: 80,
+                            right: _isDrawerOpen ? 250 : 0,
+                            left: _isDrawerOpen ? 50 : 0,
+                          ),
+                          child: QuillEditor(
+                            controller: _contentController,
+                            scrollController: ScrollController(),
+                            scrollable: true,
+                            focusNode: FocusNode(),
+                            autoFocus: false,
+                            readOnly: false,
+                            expands: true,
+                            padding: EdgeInsets.zero,
+                            customStyles: defaultStyles,
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ],
         ),
-        drawer: screenWidth < 900 ? Drawer() : null, // Replace with WriterLeftMenu
+        drawer: screenWidth < 900 ? Drawer() : null,
         floatingActionButton: FloatingActionButton(
           onPressed: _toggleDarkMode,
-          child: Icon(_isDarkMode ? Icons.brightness_high : Icons.brightness_low),
+          child: Icon(
+            _isDarkMode ? Icons.brightness_high : Icons.brightness_low,
+          ),
         ),
       ),
     );
