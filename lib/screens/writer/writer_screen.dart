@@ -15,6 +15,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   final _titleController = TextEditingController();
   bool _isDrawerOpen = true;
   bool _isDarkMode = false;
+  
 
   void _toggleDrawer() {
     setState(() {
@@ -34,14 +35,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final themeData = _isDarkMode ? DarkTheme.themeData : LightTheme.themeData;
     final textColor =
         _isDarkMode ? DarkTheme.textColorDark : LightTheme.textColorLight;
-
-    // Create custom styles for Quill Editor
-    final defaultStyles = DefaultStyles(
-      // Here, we set the text color based on the theme
-      color: textColor,
-      // You can also add other styles like heading, link, etc., as per your requirement
-      // For now, we only set the text color.
-    );
 
     return MaterialApp(
       theme: themeData,
@@ -133,16 +126,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             right: _isDrawerOpen ? 250 : 0,
                             left: _isDrawerOpen ? 50 : 0,
                           ),
-                          child: QuillEditor(
-                            controller: _contentController,
-                            scrollController: ScrollController(),
-                            scrollable: true,
-                            focusNode: FocusNode(),
-                            autoFocus: false,
-                            readOnly: false,
-                            expands: true,
-                            padding: EdgeInsets.zero,
-                            customStyles: defaultStyles,
+                          child: DefaultTextStyle(
+                            style: TextStyle(color: textColor, fontSize: 15, ),
+                            child: QuillEditor.basic(
+                              controller: _contentController,
+                              autoFocus: false,
+                              readOnly: false,
+                              placeholder: 'Start writing...',
+                            ),
                           ),
                         ),
                       ),
@@ -152,13 +143,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               ),
             ),
           ],
-        ),
-        drawer: screenWidth < 900 ? Drawer() : null,
-        floatingActionButton: FloatingActionButton(
-          onPressed: _toggleDarkMode,
-          child: Icon(
-            _isDarkMode ? Icons.brightness_high : Icons.brightness_low,
-          ),
         ),
       ),
     );

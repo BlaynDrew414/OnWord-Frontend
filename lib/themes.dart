@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class LightTheme {
   static final ThemeData themeData = ThemeData.light().copyWith(
     primaryColor: Color.fromARGB(255, 200, 241, 238),
@@ -31,3 +32,5 @@ class DarkTheme {
   );
   static const Color textColorDark = Color.fromARGB(255, 160, 161, 162);
 }
+
+
